@@ -1,4 +1,3 @@
-
 import os
 import sys
 
@@ -7,9 +6,16 @@ if os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")) not in s
         0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
     )
 
-def main():
-    print("Application started.")
+from fastapi import FastAPI
 
-if __name__ == "__main__":
-    main()
-    print("Execution completed.")
+from src.app.routers.health import health_router
+
+app = FastAPI(title="Python FastAPI Template")
+
+
+@app.get("/")
+def root():
+    return {"message": "FastAPI app is running"}
+
+
+app.include_router(health_router)
