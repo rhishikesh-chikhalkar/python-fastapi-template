@@ -1,24 +1,24 @@
-name: Deploy to VM
+name: Deploy App
 
 on:
-  push:
-    branches:
-      - main
+    push:
+        branches:
+            - main
 
 jobs:
-  deploy:
-    runs-on: ubuntu-latest
+    deploy:
+        runs-on: ubuntu-latest
 
-    steps:
-      - name: Deploy via SSH
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.VM_HOST }}
-          username: ${{ secrets.VM_USER }}
-          key: ${{ secrets.VM_SSH_KEY }}
-          script: |
-            set -e
-            cd /opt/apps/python-fastapi-template
-            git pull origin main
-            sudo systemctl restart python-fastapi-template
-            echo "Deployment completed successfully."
+        steps:
+            - name: Deploy to VM
+              uses: appleboy/ssh-action@v1.0.3
+              with:
+                  host: ${{ secrets.VM_HOST }}
+                  username: ${{ secrets.VM_USER }}
+                  key: ${{ secrets.VM_SSH_KEY }}
+                  script: |
+                      set -e
+                      APP_NAME="$(basename $GITHUB_REPOSITORY)"
+                      cd /opt/apps/$APP_NAME
+                      git pull origin main
+                      sudo systemctl restart "$APP_NAME"
